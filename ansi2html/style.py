@@ -77,19 +77,39 @@ SCHEME = {
         "#3465A4", "#75507B", "#06989A", "#D3D7CF",
         "#555753", "#EF2929", "#8AE234", "#FCE94F",
         "#729FCF", "#AD7FA8", "#34E2E2", "#EEEEEC"),
+
+    'nightshade-vivid': (
+        "#222222", "#9C574F", "#358F57", "#E7AF57",
+        "#317CB5", "#8F5F8F", "#4FAAA2", "#BABAA0",
+        "#6F6F67", "#DC7363", "#9FEA5F", "#E0D35F",
+        "#5FA6EF", "#BC7BAC", "#7BDCD2", "#DCDCD0"),
+
+    'nightshade': (
+        "#222222", "#BF7A70", "#7F9F7F", "#DFAF8F",
+        "#6092BF", "#A87390", "#72AEB0", "#BABAA0",
+        "#878780", "#CC9393", "#C5D47F", "#F0DCA5",
+        "#6092BF", "#BF86A5", "#8CD0D3", "#DCDCD0"),
+
+    'daylight': (
+        "#000000", "#9B2F23", "#208020", "#E2951D",
+        "#0F57A0", "#833B70", "#2C9093", "#777777",
+        "#6F6F67", "#D7372D", "#7DC215", "#CFB700",
+        "#1685FF", "#BF56A6", "#37BFC2", "#FFFFFF"),
+
     }
 
 
 def get_styles(dark_bg=True, scheme='ansi2html'):
 
     css = [
+        Rule('pre, code, tt', font_family='"DejaVu Sans Mono", "Bitstream Vera Sans Mono", Consolas, monospace', font_size='12px'),
         Rule('.ansi2html-content', white_space='pre-wrap', word_wrap='break-word', display='inline'),
-        Rule('.body_foreground', color=('#000000', '#AAAAAA')[dark_bg]),
-        Rule('.body_background', background_color=('#AAAAAA', '#000000')[dark_bg]),
+        Rule('.body_foreground', color=('#222222', '#DCDCD0')[dark_bg]),
+        Rule('.body_background', background_color=('#DCDCD0', '#222222')[dark_bg]),
         Rule('.body_foreground > .bold,.bold > .body_foreground, body.body_foreground > pre > .bold',
-             color=('#000000', '#FFFFFF')[dark_bg], font_weight=('bold', 'normal')[dark_bg]),
-        Rule('.inv_foreground', color=('#000000', '#FFFFFF')[not dark_bg]),
-        Rule('.inv_background', background_color=('#AAAAAA', '#000000')[not dark_bg]),
+             color=('#222222', '#FFFFFF')[dark_bg], font_weight=('bold', 'normal')[dark_bg]),
+        Rule('.inv_foreground', color=('#222222', '#DCDCD0')[not dark_bg]),
+        Rule('.inv_background', background_color=('#DCDCD0', '#222222')[not dark_bg]),
         Rule('.ansi1', font_weight='bold'),
         Rule('.ansi2', font_weight='lighter'),
         Rule('.ansi3', font_style='italic'),
@@ -105,6 +125,9 @@ def get_styles(dark_bg=True, scheme='ansi2html'):
     for _index in range(8):
         css.append(Rule('.ansi3%s' % _index, color=pal[_index]))
         css.append(Rule('.inv3%s' % _index, background_color=pal[_index]))
+        # Code 1 (bold or increased intensity) is generally rendered in most
+        # terminals using the brighter colors from the range 8-15
+        css.append(Rule('.ansi3%s.ansi1' % _index, color=pal[_index + 8], font_weight='normal'))
     for _index in range(8):
         css.append(Rule('.ansi4%s' % _index, background_color=pal[_index]))
         css.append(Rule('.inv4%s' % _index, color=pal[_index]))
