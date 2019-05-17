@@ -34,9 +34,13 @@ class Rule(object):
 def index(r, g, b):
     return str(16 + (r * 36) + (g * 6) + b)
 
+def color_component(x):
+    if x == 0:
+        return 0
+    return 0x37 + (0x28 * x)
 
 def color(r, g, b):
-    return "#%.2x%.2x%.2x" % (r * 42, g * 42, b * 42)
+    return "#%.2x%.2x%.2x" % (color_component(r), color_component(g), color_component(b))
 
 
 def level(grey):
@@ -98,12 +102,16 @@ SCHEME = {
 
     }
 
+def intensify(color, dark_bg, amount=64):
+    if not dark_bg:
+        amount = -amount
+    rgb = tuple(max(0, min(255, amount + int(color[i:i+2], 16))) for i in (1, 3, 5))
+    return "#%.2x%.2x%.2x" % rgb
 
-def get_styles(dark_bg=True, scheme='ansi2html'):
-
+def get_styles(dark_bg=True, line_wrap=True, scheme='ansi2html'):
     css = [
         Rule('pre, code, tt', font_family='"DejaVu Sans Mono", "Bitstream Vera Sans Mono", Consolas, monospace', font_size='12px'),
-        Rule('.ansi2html-content', white_space='pre-wrap', word_wrap='break-word', display='inline'),
+        Rule('.ansi2html-content', white_space=('pre', 'pre-wrap')[line_wrap], word_wrap='break-word', display='inline'),
         Rule('.body_foreground', color=('#222222', '#DCDCD0')[dark_bg]),
         Rule('.body_background', background_color=('#DCDCD0', '#222222')[dark_bg]),
         Rule('.body_foreground > .bold,.bold > .body_foreground, body.body_foreground > pre > .bold',
@@ -131,6 +139,12 @@ def get_styles(dark_bg=True, scheme='ansi2html'):
     for _index in range(8):
         css.append(Rule('.ansi4%s' % _index, background_color=pal[_index]))
         css.append(Rule('.inv4%s' % _index, color=pal[_index]))
+    for _index in range(8):
+        css.append(Rule('.ansi9%s' % _index, color=intensify(pal[_index], dark_bg)))
+        css.append(Rule('.inv9%s' % _index, background_color=intensify(pal[_index], dark_bg)))
+    for _index in range(8):
+        css.append(Rule('.ansi10%s' % _index, background_color=intensify(pal[_index], dark_bg)))
+        css.append(Rule('.inv10%s' % _index, color=intensify(pal[_index], dark_bg)))
 
     # set palette colors in 256 color encoding
     pal = SCHEME[scheme]
